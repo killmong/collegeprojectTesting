@@ -12,6 +12,11 @@ import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Question Details | Stack Overflow",
+};
 
 const QuestionDetails = async ({ params, searchParams }) => {
   const result = await getQuestionById({ questionId: params.id });

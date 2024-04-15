@@ -2,6 +2,11 @@ import Profile from "@/components/forms/Profile";
 import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs";
 import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Edit Profile | Stack Overflow",
+};
 
 const EditProfile = async () => {
   const { userId } = auth();
