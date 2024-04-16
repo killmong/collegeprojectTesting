@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Question Details | Stack Overflow",
 };
 
-const QuestionDetails = async ({ params, searchParams }) => {
+const QuestionDetails = async ({ params, searchParams }: any) => {
   const result = await getQuestionById({ questionId: params.id });
 
   const { userId: clerkId } = auth();
