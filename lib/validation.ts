@@ -18,9 +18,21 @@ export const AnswerSchema = z.object({
 });
 
 export const ProfileSchema = z.object({
-  name: z.string().min(3).max(50),
-  username: z.string().min(5).max(50),
-  bio: z.string().min(10).max(150),
+  name: z
+    .string()
+    .min(3, { message: "It must contain at least 3 character(s)" })
+    .max(50),
+  username: z
+    .string()
+    .min(5, { message: "It must contain at least 5 character(s)" })
+    .max(50),
+  bio: z
+    .string()
+    .min(10, { message: "It must contain at least 10 character(s)" })
+    .max(150),
   portfolioWebsite: z.string().url(),
-  location: z.string().min(3).max(50),
+  location: z
+    .string()
+    .min(3, { message: "It must contain at least 3 character(s)" })
+    .max(50),
 });
