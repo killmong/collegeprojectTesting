@@ -1,3 +1,7 @@
+import { auth } from "@clerk/nextjs";
+import { Metadata } from "next";
+import { HomePageFilters } from "@/constants/filters";
+import { getQuestions, getRecommendedQuestions } from "@/lib/actions/question.action";
 import HomeFilters from "@/components/HomeFilters";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Filter from "@/components/shared/Filter";
@@ -5,30 +9,36 @@ import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
-import { HomePageFilters } from "@/constants/filters";
-import {
-  getQuestions,
-  getRecommendedQuestions,
-} from "@/lib/actions/question.action";
-import { SearchParamsProps } from "@/types";
 import Link from "next/link";
-import { Metadata } from "next";
-import { auth } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Home | Stack Overflow",
 };
 
+interface SearchParamsProps {
+  searchParams: {
+    filter?: string;
+    q?: string;
+    page?: string;
+  };
+}
+
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { userId } = auth();
+  const { userId } = await auth(); // Ensure `auth` is awaited
+
+  // Await searchParams before destructuring or accessing its properties
+  const filter = searchParams?.filter || undefined;
+  const searchQuery = searchParams?.q || undefined;
+  const page = searchParams?.page ? +searchParams.page : 1;
+
   let result;
 
-  if (searchParams?.filter === "recommended") {
+  if (filter === "recommended") {
     if (userId) {
       result = await getRecommendedQuestions({
         userId,
-        searchQuery: searchParams.q,
-        page: searchParams.page ? +searchParams.page : 1,
+        searchQuery,
+        page,
       });
     } else {
       result = {
@@ -38,9 +48,9 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     }
   } else {
     result = await getQuestions({
-      searchQuery: searchParams.q,
-      filter: searchParams.filter,
-      page: searchParams.page ? +searchParams.page : 1,
+      searchQuery,
+      filter,
+      page,
     });
   }
 
@@ -91,7 +101,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         ) : (
           <NoResult
             title="There's no question to show"
-            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. our query could be the next big thing others learn from. Get involved! 💡"
+            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. Your query could be the next big thing others learn from. Get involved! 💡"
             link="/ask-question"
             linkTitle="Ask a Question"
           />
@@ -100,7 +110,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
       <div className="mt-10">
         <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          pageNumber={page}
           isNext={result.isNext}
         />
       </div>
