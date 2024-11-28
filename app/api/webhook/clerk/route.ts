@@ -106,6 +106,13 @@ export async function POST(req: Request) {
   if (eventType === "user.deleted") {
     const { id } = evt.data;
 
+    if (!id) {
+      return NextResponse.json(
+        { error: "User ID is undefined" },
+        { status: 400 }
+      );
+    }
+
     try {
       const deletedUser = await deleteUser({ clerkId: id });
       return NextResponse.json({ message: "User deleted", user: deletedUser });
